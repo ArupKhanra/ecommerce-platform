@@ -1,6 +1,7 @@
 package com.arupkhanra.ProductService.service;
 
 import com.arupkhanra.ProductService.entiry.Product;
+import com.arupkhanra.ProductService.exception.ProductServiceCustomException;
 import com.arupkhanra.ProductService.model.ProductRequest;
 import com.arupkhanra.ProductService.model.ProductResponse;
 import com.arupkhanra.ProductService.repository.ProductRepository;
@@ -36,7 +37,7 @@ public class ProductServiceImpl implements ProductService{
         log.info("get the product for productId : {}", productId);
         Product product
                 = productRepository.findById(productId).orElseThrow(
-                        ()->new RuntimeException("Product with given id not found"));
+                        ()->new ProductServiceCustomException("Product with given id not found","PRODUCT_NOT_FOUND"));
 
         ProductResponse productResponse = new ProductResponse();
         copyProperties(product,productResponse);
