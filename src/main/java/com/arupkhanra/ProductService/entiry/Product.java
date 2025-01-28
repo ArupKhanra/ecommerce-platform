@@ -1,15 +1,11 @@
 package com.arupkhanra.ProductService.entiry;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
+import lombok.*;
 
 @Entity
 @Getter
-@Service
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
