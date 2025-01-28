@@ -2,13 +2,13 @@ package com.arupkhanra.ProductService.service;
 
 import com.arupkhanra.ProductService.entiry.Product;
 import com.arupkhanra.ProductService.model.ProductRequest;
+import com.arupkhanra.ProductService.model.ProductResponse;
 import com.arupkhanra.ProductService.repository.ProductRepository;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.LogManager;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.springframework.beans.BeanUtils.*;
 
 @Service
 @Log4j2
@@ -28,5 +28,20 @@ public class ProductServiceImpl implements ProductService{
         productRepository.save(product);
         log.info("product created : "+product.getProductId());
         return product.getProductId();
+    }
+
+    @Override
+    public ProductResponse getProductById(long productId) {
+
+        log.info("get the product for productId : {}", productId);
+        Product product
+                = productRepository.findById(productId).orElseThrow(
+                        ()->new RuntimeException("Product with given id not found"));
+
+        ProductResponse productResponse = new ProductResponse();
+        copyProperties(product,productResponse);
+        return productResponse;
+
+
     }
 }
