@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: Order-Service
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/oderdb
+    username: root
+    password: test
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+server:
+  port: 8082
+
