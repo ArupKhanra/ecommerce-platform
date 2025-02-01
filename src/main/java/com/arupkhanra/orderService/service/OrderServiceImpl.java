@@ -1,6 +1,7 @@
 package com.arupkhanra.orderService.service;
 
 import com.arupkhanra.orderService.entity.Order;
+import com.arupkhanra.orderService.external.client.ProductService;
 import com.arupkhanra.orderService.model.OrderRequest;
 import com.arupkhanra.orderService.repository.OrderRepository;
 import lombok.AllArgsConstructor;
@@ -16,9 +17,15 @@ public class OrderServiceImpl implements OrderService{
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductService productService;
     @Override
     public long placeOrder(OrderRequest orderRequest) {
 
+        log.info("placing order request: {}",orderRequest);
+        productService.reduceQuantity(orderRequest.getProductId(),orderRequest.getQuantity());
+        log.info("Creating Order with Status CREATED");
         Order order = Order.builder()
                 .amount(orderRequest.getTotalAmount())
                 .orderStatus("CREATED")

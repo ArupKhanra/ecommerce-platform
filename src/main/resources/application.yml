@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Order-Service
+    name: ORDER-SERVICE
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:3306/oderdb
     username: root
