@@ -1,6 +1,7 @@
 package com.arupkhanra.orderservice.controller;
 
 import com.arupkhanra.orderservice.model.OrderRequest;
+import com.arupkhanra.orderservice.model.OrderResponse;
 import com.arupkhanra.orderservice.service.OrderService;
 import lombok.Data;
 
@@ -24,5 +25,11 @@ public class OrderController {
         long orderId = orderService.placeOrder(orderRequest);
        log.info("Order Id : {}",orderId);
         return new ResponseEntity<>(orderId ,HttpStatus.CREATED);
+    }
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderResponse> getOrderDetails(@PathVariable long orderId){
+        OrderResponse orderResponse
+                = orderService.getOrderDetails(orderId);
+        return new ResponseEntity<>(orderResponse,HttpStatus.OK);
     }
 }
