@@ -1,4 +1,4 @@
-package com.arupkhanra.orderService.model;
+package com.arupkhanra.orderservice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

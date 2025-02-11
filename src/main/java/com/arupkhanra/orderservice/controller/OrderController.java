@@ -1,7 +1,7 @@
-package com.arupkhanra.orderService.controller;
+package com.arupkhanra.orderservice.controller;
 
-import com.arupkhanra.orderService.model.OrderRequest;
-import com.arupkhanra.orderService.service.OrderService;
+import com.arupkhanra.orderservice.model.OrderRequest;
+import com.arupkhanra.orderservice.service.OrderService;
 import lombok.Data;
 
 import lombok.extern.log4j.Log4j2;

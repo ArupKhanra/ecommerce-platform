@@ -1,4 +1,4 @@
-package com.arupkhanra.orderService.exception;
+package com.arupkhanra.orderservice.exception;
 
 import lombok.Data;
 

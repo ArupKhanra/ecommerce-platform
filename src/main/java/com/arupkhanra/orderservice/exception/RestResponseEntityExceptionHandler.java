@@ -1,6 +1,6 @@
-package com.arupkhanra.orderService.exception;
+package com.arupkhanra.orderservice.exception;
 
-import com.arupkhanra.orderService.external.client.response.ErrorResponse;
+import com.arupkhanra.orderservice.external.client.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

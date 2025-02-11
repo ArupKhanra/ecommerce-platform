@@ -1,4 +1,4 @@
-package com.arupkhanra.orderService.external.client.response;
+package com.arupkhanra.orderservice.external.client.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

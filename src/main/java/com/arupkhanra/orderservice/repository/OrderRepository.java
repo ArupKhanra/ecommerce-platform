@@ -1,6 +1,6 @@
-package com.arupkhanra.orderService.repository;
+package com.arupkhanra.orderservice.repository;
 
-import com.arupkhanra.orderService.entity.Order;
+import com.arupkhanra.orderservice.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.arupkhanra.orderService.model;
+package com.arupkhanra.orderservice.model;
 
 public enum PaymentMode {
     CASH,

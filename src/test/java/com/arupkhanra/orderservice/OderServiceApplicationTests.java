@@ -1,4 +1,4 @@
-package com.arupkhanra.orderService;
+package com.arupkhanra.orderservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
