@@ -5,19 +5,22 @@ import com.arupkhanra.orderservice.exception.CustomException;
 import com.arupkhanra.orderservice.external.client.PaymentService;
 import com.arupkhanra.orderservice.external.client.ProductService;
 import com.arupkhanra.orderservice.external.client.request.PaymentRequest;
+import com.arupkhanra.orderservice.external.client.response.ProductResponse;
 import com.arupkhanra.orderservice.model.OrderRequest;
 import com.arupkhanra.orderservice.model.OrderResponse;
 import com.arupkhanra.orderservice.repository.OrderRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import jakarta.transaction.Transactional;
 import java.time.Instant;
 import java.util.UUID;
 
 @Service
 @Log4j2
-public class OrderServiceImpl implements OrderService{
+public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
@@ -27,57 +30,76 @@ public class OrderServiceImpl implements OrderService{
 
     @Autowired
     private PaymentService paymentService;
-    @Override
-    public long placeOrder(OrderRequest orderRequest) {
 
-        log.info("placing order request: {}",orderRequest);
-        productService.reduceQuantity(orderRequest.getProductId(),orderRequest.getQuantity());
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Override
+    @Transactional
+    public long placeOrder(OrderRequest orderRequest) {
+        log.info("Placing order request: {}", orderRequest);
+
+        productService.reduceQuantity(orderRequest.getProductId(), orderRequest.getQuantity());
         log.info("Creating Order with Status CREATED");
+
         Order order = Order.builder()
                 .amount(orderRequest.getTotalAmount())
                 .orderStatus("CREATED")
                 .productId(orderRequest.getProductId())
-                .orderDate(Instant.now())  // ✅ Correct field name
+                .orderDate(Instant.now())
                 .quantity(orderRequest.getQuantity())
                 .build();
-            order = orderRepository.save(order);
-            log.info("Calling Payment Service to complete the payment");
+
+        order = orderRepository.save(order);
+        log.info("Calling Payment Service to complete the payment");
+
         PaymentRequest paymentRequest = PaymentRequest.builder()
                 .orderId(order.getId())
                 .paymentMode(orderRequest.getPaymentMode())
                 .amount(orderRequest.getTotalAmount())
-                .referenceNumber(UUID.randomUUID().toString()) // ✅ Generate unique reference number
+                .referenceNumber(UUID.randomUUID().toString())
                 .build();
 
-        String orderStatus = null;
-        try{
+        String orderStatus;
+        try {
             paymentService.doPayment(paymentRequest);
-            log.info("Payment done successfully. Changing the Order status to placed");
+            log.info("Payment done successfully. Changing Order status to PLACED");
             orderStatus = "PLACED";
-        }catch (Exception e){
-            log.info("Error occurred in the payment. changing order status PAYMENT_FAILED ");
+        } catch (Exception e) {
+            log.error("Error in payment. Changing order status to PAYMENT_FAILED", e);
             orderStatus = "PAYMENT_FAILED";
         }
 
-
         order.setOrderStatus(orderStatus);
         orderRepository.save(order);
-            log.info("Oder place successfully with order id : {}",order.getId());
+        log.info("Order placed successfully with ID: {}", order.getId());
+
         return order.getId();
     }
 
     @Override
     public OrderResponse getOrderDetails(long orderId) {
-        log.info("Get order details for order Id :{}",orderId);
-        Order order
-                = orderRepository.findById(orderId)
-                .orElseThrow(()->new CustomException("Order id not found for the order id"+orderId,"NOT_FOUND",404));
+        log.info("Fetching order details for order ID: {}", orderId);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new CustomException("Order ID not found: " + orderId, "NOT_FOUND", 404));
+
+        log.info("Calling Product Service for Product ID: {}", order.getProductId());
+        ProductResponse productDetails = restTemplate.getForObject(
+                "http://PRODUCT-SERVICE/productService/products/" + order.getProductId(), ProductResponse.class);
+
+        OrderResponse.ProductDetails productDetailsResponse = OrderResponse.ProductDetails.builder()
+                .productName(productDetails.getProductName())
+                .productId(productDetails.getProductId())
+                .quantity(productDetails.getQuantity())
+                .price(productDetails.getPrice())
+                .build();
+
         return OrderResponse.builder()
                 .orderId(order.getId())
                 .orderStatus(order.getOrderStatus())
                 .amount(order.getAmount())
                 .orderDate(order.getOrderDate())
+                .productDetails(productDetailsResponse)
                 .build();
-
     }
 }
