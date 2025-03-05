@@ -11,10 +11,27 @@ spring:
     hibernate:
       ddl-auto: update
   config:
-    import: "optional:configserver:http://localhost:9296"
+    import: optional:configserver:http://localhost:9296
 
 server:
   port: 8082
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+resilience4j:
+  circuit-breaker:
+    instances:
+      ORDER-SERVICE:
+        failureRateThreshold: 30  # ৫০% ফেইল হলে Circuit Breaker active হবে
+        waitDurationInOpenState: 5m  # 5 মিনিট পরে Half-Open হবে
+        permittedNumberOfCallsInHalfOpenState: 5  # Half-open হলে ৫টি request allow করবে
+        slidingWindowSize: 4  # শেষ ১০টি request-এর উপর fallback হবে
+        minimumNumberOfCalls: 5  # Circuit breaker active হতে মিনিমাম ৫টি call লাগবে
 
 #eureka:
 #  instance:
